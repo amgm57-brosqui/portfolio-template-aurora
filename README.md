@@ -2,4 +2,4 @@
 
 > by Aurora
 
-Puedes ver mi portfolio aquí:[Portfolio_Aurora_MGM07](https://amgm57-brosqui.github.io/portfolio-template-aurora/)
+Puedes ver mi portfolio aquí:[Portfolio Aurora](https://amgm57-brosqui.github.io/portfolio-template-aurora/)
