@@ -1,423 +1,758 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
+    <!-- META -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grade 2 Demo: Bootstrap + GSAP Scroll</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Aurora — Portfolio</title>
+    <meta
+      name="description"
+      content="Portfolio personal de diseño gráfico: branding, layout, motion y 3D."
+    />
+    <meta name="theme-color" content="#0b0b0e" />
 
-    <!-- Bootstrap CSS -->
+    <!-- CSS: LIBRERÍAS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
 
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="./assets/css/otros.css" />
-    <!-- Custom Scripts -->
-    <script src="./assets/js/main.js" defer></script>
+    <!-- CSS: PROYECTO -->
+    <link rel="stylesheet" href="assets/css/index.css" />
+
+    <!-- JS: LIBRERÍAS -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   </head>
-  <body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="100">
-    <!-- Navigation -->
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark fixed-top">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="#">Portfolio</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+
+  <body class="theme-dark">
+    <!-- ACCESIBILIDAD -->
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+
+    <!-- RATÓN / CURSOR -->
+    <div class="noise" aria-hidden="true"></div>
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-blob" aria-hidden="true"></div>
+
+    <!-- HEADER -->
+    <header class="header fixed-top">
+      <nav class="container-fluid headerbar headerbar--pill">
+        <div class="header-left">
+          <span class="mini-label" id="localTime">LOCAL / --:--</span>
+          <span class="header-dot" aria-hidden="true"></span>
+          <span class="mini-label d-none d-md-inline">AVAILABLE</span>
+        </div>
+
+        <div
+          class="header-center d-none d-md-flex"
+          aria-label="Navegación principal"
         >
-          <span class="navbar-toggler-icon"></span>
+          <div class="nav-pill">
+            <a class="nav-pill__link" href="#home">INICIO</a>
+            <a class="nav-pill__link" href="#software">SOFTWARE</a>
+            <a class="nav-pill__link" href="#projects">PROYECTOS</a>
+            <a class="nav-pill__link" href="#about">CONÓCEME</a>
+            <a class="nav-pill__link" href="#contact">CONTACTO</a>
+          </div>
+        </div>
+
+        <button
+          class="menu-toggle d-md-none"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="menuOverlay"
+          type="button"
+        >
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
-            <li class="nav-item">
-              <a class="nav-link" href="#about">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#projects">Projects</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#contact">Contact</a>
-            </li>
-          </ul>
+
+        <div class="header-right">
+          <div class="lang d-none d-md-flex" aria-label="Idioma">
+            <button
+              class="lang-btn is-active"
+              type="button"
+              data-lang="es"
+              aria-pressed="true"
+            >
+              ES
+            </button>
+            <button
+              class="lang-btn"
+              type="button"
+              data-lang="en"
+              aria-pressed="false"
+            >
+              EN
+            </button>
+          </div>
+
+          <a class="btn-cta magnetic" href="#contact">CUÉNTAME TU IDEA</a>
+        </div>
+
+        <div class="scroll-progress" aria-hidden="true">
+          <span class="scroll-progress-bar" id="scrollProgress"></span>
+        </div>
+      </nav>
+    </header>
+
+    <!-- MENÚ MÓVIL -->
+    <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+      <div class="menu-panel container">
+        <div class="menu-top">
+          <span class="mini-label">MENÚ</span>
+
+          <button
+            class="menu-toggle menu-toggle--close"
+            aria-label="Cerrar menú"
+            aria-expanded="true"
+            type="button"
+          >
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </button>
+        </div>
+
+        <ul class="menu-list" role="menu">
+          <li role="none"><a role="menuitem" href="#software">SOFTWARE</a></li>
+          <li role="none"><a role="menuitem" href="#projects">PROYECTOS</a></li>
+          <li role="none"><a role="menuitem" href="#about">CONÓCEME</a></li>
+          <li role="none"><a role="menuitem" href="#contact">CONTACTO</a></li>
+        </ul>
+
+        <div class="lang lang--mobile" aria-label="Idioma">
+          <button
+            class="lang-btn is-active"
+            type="button"
+            data-lang="es"
+            aria-pressed="true"
+          >
+            ES
+          </button>
+          <button
+            class="lang-btn"
+            type="button"
+            data-lang="en"
+            aria-pressed="false"
+          >
+            EN
+          </button>
         </div>
       </div>
-    </nav>
+    </div>
 
-    <main>
-      <!-- Hero Section -->
+    <!-- MAIN -->
+    <main id="main">
+      <!-- HERO -->
       <section
-        id="hero"
-        class="hero min-vh-100 d-flex align-items-center position-relative overflow-hidden"
+        id="home"
+        class="hero hero-video container-fluid hero-zen"
+        aria-label="Inicio"
       >
-        <!-- Parallax Background -->
-        <div class="hero-bg position-absolute w-100 h-100"></div>
-
-        <!-- Floating shapes (GSAP animated) -->
-        <div class="floating-shapes">
-          <div class="shape shape-1"></div>
-          <div class="shape shape-2"></div>
-          <div class="shape shape-3"></div>
+        <div class="hero-bg" aria-hidden="true">
+          <video
+            class="hero-video-el"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="assets/images/hero-poster.jpg"
+          >
+            <source
+              src="https://ik.imagekit.io/ospeisx31i/18069862-uhd_3840_2160_24fps.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <div class="hero-overlay"></div>
+          <div class="hero-vignette"></div>
         </div>
 
-        <div class="container position-relative z-1 text-center text-white">
-          <h1 class="display-1 fw-bold hero-title">John Designer</h1>
-          <p class="lead hero-subtitle mb-4">
-            Full-Stack Developer & Creative Technologist
-          </p>
-          <div class="hero-cta">
-            <a href="#projects" class="btn btn-primary btn-lg me-3"
-              >View Projects</a
-            >
-            <a href="#contact" class="btn btn-outline-light btn-lg"
-              >Get in Touch</a
-            >
-          </div>
-        </div>
+        <div class="container hero-inner hero-zen-inner position-relative">
+          <div class="hero-zen-grid">
+            <div class="hero-zen-left">
+              <p class="hero-zen-kicker">PORTFOLIO - 2026</p>
 
-        <!-- Scroll indicator -->
-        <div
-          class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-4"
-        >
-          <div class="mouse"></div>
-        </div>
-      </section>
-
-      <!-- About Section -->
-      <section id="about" class="py-5 py-lg-6 bg-dark">
-        <div class="container">
-          <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-              <div class="about-image gsap-reveal">
-                <img
-                  src="https://picsum.photos/600/700?random=10"
-                  alt="Profile"
-                  class="img-fluid rounded-4 shadow-lg"
-                />
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <h2 class="display-5 fw-bold mb-4 gsap-reveal">About Me</h2>
-              <p class="lead text-muted mb-4 gsap-reveal">
-                I'm a creative developer passionate about building beautiful,
-                functional, and accessible digital experiences.
-              </p>
-              <p class="text-muted gsap-reveal">
-                With 7+ years of experience spanning front-end development,
-                UI/UX design, and motion graphics, I bring a unique perspective
-                to every project. I believe in the power of animation to enhance
-                user experience without sacrificing performance.
-              </p>
-
-              <!-- Skills with animated progress -->
-              <div class="skills mt-5">
-                <div class="skill-item gsap-reveal mb-3">
-                  <div class="d-flex justify-content-between mb-2">
-                    <span class="fw-semibold">React / Next.js</span>
-                    <span class="text-muted">95%</span>
-                  </div>
-                  <div class="progress" style="height: 8px">
-                    <div class="progress-bar skill-bar" data-width="95"></div>
-                  </div>
-                </div>
-                <div class="skill-item gsap-reveal mb-3">
-                  <div class="d-flex justify-content-between mb-2">
-                    <span class="fw-semibold">GSAP / Animation</span>
-                    <span class="text-muted">90%</span>
-                  </div>
-                  <div class="progress" style="height: 8px">
-                    <div class="progress-bar skill-bar" data-width="90"></div>
-                  </div>
-                </div>
-                <div class="skill-item gsap-reveal mb-3">
-                  <div class="d-flex justify-content-between mb-2">
-                    <span class="fw-semibold">Node.js / Express</span>
-                    <span class="text-muted">85%</span>
-                  </div>
-                  <div class="progress" style="height: 8px">
-                    <div class="progress-bar skill-bar" data-width="85"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Projects Section -->
-      <section id="projects" class="py-5 py-lg-6">
-        <div class="container">
-          <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold gsap-reveal">Featured Projects</h2>
-            <p class="lead text-muted gsap-reveal">
-              A selection of my recent work
-            </p>
-          </div>
-
-          <div class="row g-4">
-            <!-- Project Card 1 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=1"
-                    class="card-img-top"
-                    alt="E-commerce Platform"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">E-commerce Platform</h3>
-                  <p class="card-text text-muted small">
-                    Full-stack e-commerce solution with real-time inventory and
-                    Stripe integration.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >React</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Node.js</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >MongoDB</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Project Card 2 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=2"
-                    class="card-img-top"
-                    alt="Dashboard UI"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">Analytics Dashboard</h3>
-                  <p class="card-text text-muted small">
-                    Real-time data visualization with interactive charts and
-                    dark mode.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >D3.js</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >WebSocket</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >GSAP</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Project Card 3 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=3"
-                    class="card-img-top"
-                    alt="Mobile App"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">Fitness Mobile App</h3>
-                  <p class="card-text text-muted small">
-                    Cross-platform fitness tracker with workout plans and
-                    progress analytics.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >React Native</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Firebase</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Project Card 4 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=4"
-                    class="card-img-top"
-                    alt="Portfolio Site"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">Agency Website</h3>
-                  <p class="card-text text-muted small">
-                    Award-winning agency site with scroll-driven animations and
-                    3D elements.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Three.js</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >GSAP</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Project Card 5 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=5"
-                    class="card-img-top"
-                    alt="SaaS Platform"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">SaaS Platform</h3>
-                  <p class="card-text text-muted small">
-                    Multi-tenant SaaS with role-based access and subscription
-                    management.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Next.js</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Prisma</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Project Card 6 -->
-            <div class="col-md-6 col-lg-4">
-              <article class="card project-card h-100 border-0 shadow-sm">
-                <div class="card-img-wrapper overflow-hidden">
-                  <img
-                    src="https://picsum.photos/400/300?random=6"
-                    class="card-img-top"
-                    alt="AI Tool"
-                  />
-                </div>
-                <div class="card-body">
-                  <h3 class="card-title h5">AI Content Generator</h3>
-                  <p class="card-text text-muted small">
-                    GPT-powered content creation tool with custom fine-tuning
-                    options.
-                  </p>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-primary-subtle text-primary"
-                      >OpenAI</span
-                    >
-                    <span class="badge bg-primary-subtle text-primary"
-                      >Python</span
-                    >
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Contact Section -->
-      <section id="contact" class="py-5 py-lg-6 bg-dark">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-              <h2 class="display-5 fw-bold mb-4 gsap-reveal">
-                Let's Work Together
+              <h2 class="hero-zen-headline">
+                Tu visión, mi diseño.
+                <span class="hero-zen-strong">Impacto que perdura.</span>
               </h2>
-              <p class="lead text-muted mb-5 gsap-reveal">
-                Have a project in mind? I'd love to hear about it. Let's create
-                something amazing.
+
+              <p class="hero-zen-sub">
+                Brand Identity · Layout &amp; Editorial · Motion &amp; 3D
               </p>
-              <div class="gsap-reveal">
-                <a
-                  href="mailto:hello@example.com"
-                  class="btn btn-primary btn-lg mb-4"
-                >
-                  Start a Conversation
-                </a>
+
+              <div class="hero-cta">
+                <a class="btn-pill magnetic" href="#projects">VER PROYECTOS</a>
+                <a class="btn-ghost" href="#about">CONÓCEME</a>
               </div>
+            </div>
+
+            <div class="hero-zen-right">
               <div
-                class="social-links gsap-reveal d-flex justify-content-center gap-4"
+                id="heroCarousel"
+                class="carousel slide hero-carousel"
+                data-bs-ride="carousel"
+                data-bs-interval="2600"
               >
-                <a href="#" class="text-muted fs-4" aria-label="GitHub">
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img
+                      src="https://ik.imagekit.io/ospeisx31i/ALMA_VOLANTE.png"
+                      class="d-block w-100"
+                      alt="Alma Volante"
                     />
-                  </svg>
-                </a>
-                <a href="#" class="text-muted fs-4" aria-label="LinkedIn">
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                  </div>
+                  <div class="carousel-item">
+                    <img
+                      src="https://ik.imagekit.io/ospeisx31i/NOGA_PLUG.png"
+                      class="d-block w-100"
+                      alt="Noga Plug"
                     />
-                  </svg>
-                </a>
-                <a href="#" class="text-muted fs-4" aria-label="Twitter">
-                  <svg
-                    width="24"
-                    height="24"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                  </div>
+                  <div class="carousel-item">
+                    <img
+                      src="https://ik.imagekit.io/ospeisx31i/MARCA_DEPORTIVA.png"
+                      class="d-block w-100"
+                      alt="Marca Deportiva"
                     />
-                  </svg>
-                </a>
+                  </div>
+                  <div class="carousel-item">
+                    <img
+                      src="https://ik.imagekit.io/ospeisx31i/Gallardo.Aurora_3.3_Lata-Campan%CC%83a.jpg"
+                      class="d-block w-100"
+                      alt="Lata Campaña"
+                    />
+                  </div>
+                </div>
+
+                <div class="hero-carousel-ui">
+                  <span class="hero-carousel-tag">
+                    Top · Design in solution</span
+                  >
+
+                  <button
+                    class="hero-carousel-btn"
+                    type="button"
+                    data-bs-target="#heroCarousel"
+                    data-bs-slide="prev"
+                    aria-label="Anterior"
+                  >
+                    <i class="fa-solid fa-arrow-left"></i>
+                  </button>
+
+                  <button
+                    class="hero-carousel-btn"
+                    type="button"
+                    data-bs-target="#heroCarousel"
+                    data-bs-slide="next"
+                    aria-label="Siguiente"
+                  >
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
               </div>
+            </div>
+
+            <div class="hero-zen-word" aria-hidden="true">AURORA</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOFTWARE -->
+      <section id="software" class="section container">
+        <div class="section-head">
+          <h2 class="h2-big">SOFTWARE</h2>
+          <div class="section-sub d-none d-md-block">
+            <span class="mini-label">HERRAMIENTAS</span>
+          </div>
+        </div>
+
+        <div class="row g-3 software-grid">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="soft-card reveal">
+              <div class="soft-top">
+                <span class="soft-n">(1)</span>
+                <button class="soft-plus" type="button" aria-label="Ver más">
+                  <span>+</span>
+                </button>
+              </div>
+              <h3 class="soft-title">BRAND IDENTITY</h3>
+              <p class="soft-text">
+                Construyo identidades visuales sólidas: concepto, sistema
+                gráfico, aplicaciones y coherencia en todos los formatos.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="soft-card reveal">
+              <div class="soft-top">
+                <span class="soft-n">(2)</span>
+                <button class="soft-plus" type="button" aria-label="Ver más">
+                  <span>+</span>
+                </button>
+              </div>
+              <h3 class="soft-title">WEB DESIGN</h3>
+              <p class="soft-text">
+                Diseño digital con enfoque editorial: jerarquía, tipografía,
+                grillas y micro-interacciones.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="soft-card reveal">
+              <div class="soft-top">
+                <span class="soft-n">(3)</span>
+                <button class="soft-plus" type="button" aria-label="Ver más">
+                  <span>+</span>
+                </button>
+              </div>
+              <h3 class="soft-title">3D RENDERING</h3>
+              <p class="soft-text">
+                Modelado y renders para producto/escena: iluminación,
+                materiales, composición y detalle.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-6">
+            <article class="soft-card reveal">
+              <div class="soft-top">
+                <span class="soft-n">(4)</span>
+                <button class="soft-plus" type="button" aria-label="Ver más">
+                  <span>+</span>
+                </button>
+              </div>
+              <h3 class="soft-title">LAYOUT DESIGN</h3>
+              <p class="soft-text">
+                Maquetación editorial, piezas para impresión y sistemas de
+                composición consistentes.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-6">
+            <article class="soft-card reveal">
+              <div class="soft-top">
+                <span class="soft-n">(5)</span>
+                <button class="soft-plus" type="button" aria-label="Ver más">
+                  <span>+</span>
+                </button>
+              </div>
+              <h3 class="soft-title">MOTION GRAPHICS</h3>
+              <p class="soft-text">
+                Animación tipográfica, ritmo y narrativa visual. Motion como
+                extensión natural del diseño.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREMIOS -->
+      <section
+        class="section container awards"
+        id="awards"
+        aria-label="Premios y reconocimientos"
+      >
+        <div class="section-head">
+          <h2 class="h2-big">PREMIOS</h2>
+          <div class="section-sub d-none d-md-block">
+            <span class="mini-label">RECONOCIMIENTOS</span>
+          </div>
+        </div>
+
+        <br />
+
+        <div class="awards-grid">
+          <article class="award-card reveal">
+            <span class="award-shine" aria-hidden="true"></span>
+
+            <div class="award-top">
+              <span class="award-badge">(01)</span>
+              <span class="award-year">2024</span>
+            </div>
+
+            <h3 class="award-title">Finalista — FEELMOTION</h3>
+
+            <p class="award-desc">
+              Proyecto seleccionado como <strong>finalista</strong> en el
+              certamen FEELMOTION por el desarrollo de la identidad visual
+              <strong>GLOWER STUDIO</strong>, destacando por su concepto,
+              coherencia gráfica y ejecución.
+            </p>
+
+            <div class="award-meta">
+              <span class="award-tag">Branding</span>
+              <span class="award-dot"></span>
+              <span class="award-tag">Identidad Visual</span>
+            </div>
+          </article>
+
+          <article class="award-card reveal">
+            <span class="award-shine" aria-hidden="true"></span>
+
+            <div class="award-top">
+              <span class="award-badge">(02)</span>
+              <span class="award-year">2025</span>
+            </div>
+
+            <h3 class="award-title">Mención Académica Destacada</h3>
+
+            <p class="award-desc">
+              Reconocimiento académico por una propuesta de
+              <strong>diseño editorial</strong> y sistema visual aplicado a una
+              campaña conceptual, valorando la narrativa, jerarquía tipográfica
+              y composición.
+            </p>
+
+            <div class="award-meta">
+              <span class="award-tag">Editorial</span>
+              <span class="award-dot"></span>
+              <span class="award-tag">Layout</span>
+            </div>
+          </article>
+
+          <article class="award-card reveal">
+            <span class="award-shine" aria-hidden="true"></span>
+
+            <div class="award-top">
+              <span class="award-badge">(03)</span>
+              <span class="award-year">2026</span>
+            </div>
+
+            <h3 class="award-title">Selección — Portfolio Showcase</h3>
+
+            <p class="award-desc">
+              Selección de trabajos destacados para exposición de portfolios por
+              su enfoque estético, consistencia visual y capacidad de
+              transformar ideas en experiencias gráficas con impacto.
+            </p>
+
+            <div class="award-meta">
+              <span class="award-tag">Dirección de Arte</span>
+              <span class="award-dot"></span>
+              <span class="award-tag">Portfolio</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- PROYECTOS -->
+      <section id="projects" class="section container">
+        <div class="section-head">
+          <h2 class="h2-big">PROYECTOS</h2>
+          <div class="section-sub d-none d-md-block">
+            <span class="mini-label">SELECCIÓN</span>
+          </div>
+        </div>
+
+        <br />
+
+        <div class="projects-grid">
+          <article class="project-card reveal" data-tilt>
+            <div class="project-media">
+              <img
+                src="https://ik.imagekit.io/ospeisx31i/Captura%20de%20pantalla%202026-01-07%20a%20las%2014.03.25.png"
+                alt="Proyecto 1"
+                loading="lazy"
+              />
+            </div>
+            <div class="project-foot">
+              <div>
+                <p class="project-name">GLOWER STUDIO</p>
+                <p class="project-type">Branding(FINALISTA FEELMOTION)</p>
+              </div>
+              <span class="project-year">2024</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-tilt>
+            <div class="project-media">
+              <img src="assets/images/p2.jpg" alt="Proyecto 2" loading="lazy" />
+            </div>
+            <div class="project-foot">
+              <div>
+                <p class="project-name">Brujúla ter</p>
+                <p class="project-type">Branding · Web Design</p>
+              </div>
+              <span class="project-year">2025</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-tilt>
+            <div class="project-media">
+              <img
+                src="https://ik.imagekit.io/ospeisx31i/Captura%20de%20pantalla%202026-01-07%20a%20las%2014.13.27.png"
+                alt="Proyecto 3"
+                loading="lazy"
+              />
+            </div>
+            <div class="project-foot">
+              <div>
+                <p class="project-name">ENOLA HOMES</p>
+                <p class="project-type">Diseño Editorial · Branding</p>
+              </div>
+              <span class="project-year">2023</span>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-tilt>
+            <div class="project-media">
+              <img
+                src="https://ik.imagekit.io/ospeisx31i/Captura%20de%20pantalla%202026-01-07%20a%20las%2014.05.18.png"
+                alt="Proyecto 4"
+                loading="lazy"
+              />
+            </div>
+            <div class="project-foot">
+              <div>
+                <p class="project-name">REBRANDING HOTELES THOMPSON</p>
+                <p class="project-type">Rebranding · Merchandising</p>
+              </div>
+              <span class="project-year">2025</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- CONÓCEME -->
+      <section id="about" class="section container about">
+        <div class="about-center reveal">
+          <h2 class="about-title">CONÓCEME</h2>
+          <p class="about-handle">@Amgm_07</p>
+
+          <div class="about-photo" data-tilt>
+            <img
+              src="https://ik.imagekit.io/ospeisx31i/PERSONAL1.jpg"
+              loading="lazy"
+              alt="Aurora Gallardo"
+            />
+          </div>
+
+          <h3 class="about-tag">TU IDEA, MI DISEÑO, NUESTRO IMPACTO.</h3>
+
+          <p class="about-text">
+            Soy Aurora Gallardo, diseñadora en formación y creadora de ideas con
+            intención. Estudiante de cuarto año de Diseño Multimedia y Gráfico
+            en la Universidad de Diseño, Innovación y Tecnología (UDIT),
+            apasionada por transformar conceptos en experiencias visuales que
+            comuniquen, conecten y dejen huella. Nací en Montilla, Córdoba, y
+            desde allí aprendí a combinar sensibilidad, disciplina y mucha
+            curiosidad. Me considero empática, organizada y valiente frente a
+            cualquier reto creativo. Disfruto especialmente de los proyectos
+            donde la estrategia se une con la creatividad: desde contenido para
+            redes sociales hasta comunicación visual con impacto. Mi objetivo:
+            seguir creciendo en proyectos innovadores donde el diseño no solo se
+            vea bien, sino que también diga algo.
+          </p>
+
+          <a class="btn-pill magnetic" href="#contact">CUÉNTAME TU IDEA</a>
+        </div>
+      </section>
+
+      <!-- CONTACTO -->
+      <section id="contact" class="section container contact">
+        <div class="section-head">
+          <h2 class="h2-big">CONTACTO</h2>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12 col-lg-6">
+            <div class="glass-card reveal">
+              <p class="muted">
+                Escríbeme y lo convertimos en algo visualmente potente. Respondo
+                en 24–48h.
+              </p>
+
+              <form class="contact-form" autocomplete="on">
+                <label class="sr-only" for="name">Nombre</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Tu nombre"
+                  required
+                />
+
+                <label class="sr-only" for="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Tu email"
+                  required
+                />
+
+                <label class="sr-only" for="msg">Mensaje</label>
+                <textarea
+                  id="msg"
+                  name="message"
+                  placeholder="Cuéntame tu idea..."
+                  rows="5"
+                  required
+                ></textarea>
+
+                <button class="btn-pill magnetic" type="submit" data-cta="send">
+                  Enviar
+                </button>
+              </form>
+
+              <p class="tiny muted mt-3">
+                Proporcionar todo tipo de información
+              </p>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="glass-card reveal">
+              <p class="eyebrow">Redes</p>
+              <div class="socials">
+                <a
+                  class="social"
+                  href="https://www.instagram.com/amgm_07/"
+                  aria-label="Instagram"
+                  >Instagram</a
+                >
+                <a
+                  class="social"
+                  href="https://www.behance.net/auroragallard"
+                  aria-label="Behance"
+                  >Behance</a
+                >
+                <a
+                  class="social"
+                  href="https://www.linkedin.com/in/aurora-maría-gallardo-márquez-a864a926a/"
+                  aria-label="LinkedIn"
+                  >LinkedIn</a
+                >
+              </div>
+
+              <div class="divider"></div>
+
+              <p class="eyebrow">Email</p>
+              <a class="social" href="mailto:auroragama.nina@hotmail.com"
+                >auroragama.nina@hotmail.com</a
+              >
+
+              <div class="divider"></div>
+
+              <p class="muted">
+                Si quieres, te preparo una versión “Case Study” por proyecto
+                (tipo editorial), como en estudios creativos.
+              </p>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- FOOTER -->
+      <footer class="footer footer-pro container" aria-label="Pie de página">
+        <div class="row g-4 align-items-start">
+          <div class="col-12 col-lg-5">
+            <p class="footer-title">AURORA</p>
+            <p class="footer-desc">
+              TU IDEA, MI DISEÑO, NUESTRO IMPACTO <br />
+              Branding · Layout · Motion · 3D.
+            </p>
+
+            <div class="footer-cta d-flex gap-2 flex-wrap">
+              <a class="btn-pill magnetic" href="#contact">CUÉNTAME TU IDEA</a>
+              <a class="btn-ghost" href="#projects">VER PROYECTOS</a>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <p class="footer-label">NAVEGACIÓN</p>
+            <ul class="footer-links">
+              <li><a href="#home">Inicio</a></li>
+              <li><a href="#software">Software</a></li>
+              <li><a href="#projects">Proyectos</a></li>
+              <li><a href="#about">Conóceme</a></li>
+              <li><a href="#contact">Contacto</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-lg-4">
+            <p class="footer-label">REDES</p>
+
+            <ul class="footer-socials" aria-label="Redes sociales">
+              <li>
+                <a
+                  href="https://www.instagram.com/amgm_07/"
+                  aria-label="Instagram"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="fa-brands fa-instagram"></i>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.behance.net/auroragallard"
+                  aria-label="Behance"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="fa-brands fa-behance"></i>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/aurora-maría-gallardo-márquez-a864a926a/"
+                  aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="fa-brands fa-linkedin-in"></i>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:auroragama.nina@hotmail.com" aria-label="Email">
+                  <i class="fa-solid fa-envelope"></i>
+                </a>
+              </li>
+            </ul>
+
+            <div class="footer-meta">
+              <span class="dot"></span>
+              <span>Disponible para proyectos</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <span class="tiny muted">© 2026 Aurora — Portfolio</span>
+          <div class="d-flex gap-3 align-items-center">
+            <a class="tiny muted" href="#" id="toTop">Volver arriba ↑</a>
+          </div>
+        </div>
+      </footer>
     </main>
 
-    <!-- Footer -->
-    <footer class="py-4 text-center text-muted small">
-      <div class="container">
-        <p class="mb-0">
-          &copy; 2025 John Designer. Built with Bootstrap 5 + GSAP.
-        </p>
-      </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
+    <!-- JS: LIBRERÍAS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- GSAP + Plugins -->
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollToPlugin.min.js"></script>
+    <!-- JS: PROYECTO -->
+    <script src="assets/js/main.js"></script>
   </body>
 </html>

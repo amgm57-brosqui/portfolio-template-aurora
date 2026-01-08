@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>404 — Aurora</title>
+    <meta name="theme-color" content="#0b0b0e" />
+    <meta name="description" content="404 — Página no encontrada." />
+
+    <!-- Bootstrap (opcional, pero tú lo usas en el proyecto) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Clash Display -->
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
+    />
+
+    <!-- ✅ TU CSS REAL (el que ya incluye componentes.css dentro) -->
+    <link rel="stylesheet" href="assets/css/index.css" />
+  </head>
+
+  <body class="theme-dark">
+    <!-- FX: ruido + cursor (igual que tu index) -->
+    <div class="noise" aria-hidden="true"></div>
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-blob" aria-hidden="true"></div>
+
+    <main class="e404" role="main" aria-label="Error 404">
+      <div class="e404-bg" aria-hidden="true"></div>
+
+      <section class="e404-card">
+        <div class="e404-top">
+          <span class="e404-label">ERROR</span>
+          <span class="e404-dot" aria-hidden="true"></span>
+          <span class="e404-label">404</span>
+        </div>
+
+        <h1 class="e404-title">
+          Te has salido del mapa.
+          <span class="e404-title-strong">Pero el diseño te encuentra.</span>
+        </h1>
+
+        <p class="e404-sub">
+          Esta ruta no existe o fue movida. Puedes volver al inicio o saltar a
+          una sección del portfolio.
+        </p>
+
+        <div class="e404-actions">
+          <a class="btn-pill magnetic" href="index.html#home"
+            >VOLVER AL INICIO</a
+          >
+          <a class="btn-ghost magnetic" href="index.html#projects"
+            >VER PROYECTOS</a
+          >
+        </div>
+
+        <div class="e404-links">
+          <a class="e404-link" href="index.html#software">Software</a>
+          <span class="e404-sep">·</span>
+          <a class="e404-link" href="index.html#projects">Proyectos</a>
+          <span class="e404-sep">·</span>
+          <a class="e404-link" href="index.html#about">Conóceme</a>
+          <span class="e404-sep">·</span>
+          <a class="e404-link" href="index.html#contact">Contacto</a>
+        </div>
+
+        <div class="e404-scan" aria-hidden="true">
+          <span class="e404-scanline"></span>
+        </div>
+
+        <div class="e404-foot">
+          <span class="e404-muted">AURORA — Portfolio</span>
+          <span class="e404-muted" id="localTime">LOCAL / --:--</span>
+        </div>
+      </section>
+
+      <div class="e404-word" aria-hidden="true">NOT FOUND</div>
+    </main>
+
+    <!-- ✅ TU JS REAL (ahí ya pegaste el bloque de 404) -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Bootstrap JS (opcional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

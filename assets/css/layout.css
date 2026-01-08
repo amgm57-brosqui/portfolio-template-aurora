@@ -1,0 +1,56 @@
+.section {
+  padding: clamp(3.2rem, 8vw, 6.5rem) 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.h2-big {
+  font-size: var(--h2);
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 0.95;
+}
+
+.mini-label {
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mini-sep {
+  color: var(--muted-2);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.tiny {
+  font-size: var(--text-xs);
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 1.2rem 0;
+}
+
+/* Vertical line decor (como en tus capturas) */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 14px;
+  width: 2px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 0.35;
+  pointer-events: none;
+}
