@@ -1183,7 +1183,6 @@
 
 .about-center {
   text-align: center;
-  max-width: 64ch;
   margin: 0 auto;
 }
 
@@ -1700,6 +1699,518 @@ body {
   color: transparent;
   opacity: 0.85;
 }
+/* ✅ Container idéntico al resto (max-width: 960px) */
+.exp-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-left: clamp(14px, 3vw, 28px);
+  padding-right: clamp(14px, 3vw, 28px);
+}
+
+/* Grid horizontal como SOFTWARE */
+.exp-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Card base (ADN soft-card) */
+.exp-card {
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.25s ease, border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.exp-card::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.1),
+    transparent 55%
+  );
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.exp-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.055);
+}
+.exp-card:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Botón */
+.exp-card__btn {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 1.1rem;
+}
+
+/* Top row (n + plus) */
+.exp-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.exp-card__n {
+  font-size: var(--text-xs);
+  color: var(--muted-2);
+  letter-spacing: 0.18em;
+}
+
+.exp-card__plus {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  transition: transform 0.35s ease, background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Textos */
+.exp-card__company {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.exp-card__role {
+  margin: 0 0 0.65rem 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.exp-card__meta {
+  margin: 0;
+  color: var(--muted-2);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Panel */
+.exp-card__panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.exp-card__content {
+  padding: 0.95rem 1.1rem 1.1rem 1.1rem;
+}
+.exp-card__text {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.exp-card__list {
+  margin: 0.6rem 0 0 1.1rem;
+  padding: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.exp-card__tools {
+  margin-top: 0.75rem;
+  color: var(--muted-2);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.exp-card__tools span {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+}
+
+/* Estado abierto */
+.exp-card.is-open .exp-card__plus {
+  transform: rotate(90deg);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Focus */
+.exp-card__btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.28);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+/* =========================
+   ABOUT DASH (visual)
+========================= */
+
+.about-dash {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.about-stat {
+  padding: 1.1rem;
+  min-height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-stat::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.1),
+    transparent 55%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.about-stat__k {
+  margin: 0 0 0.65rem 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  position: relative;
+  z-index: 1;
+}
+
+.about-stat__v {
+  margin: 0;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.92);
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
+.about-stat__v .plus {
+  font-size: 0.6em;
+  opacity: 0.85;
+  margin-left: 0.1em;
+}
+
+.about-stat__l {
+  margin: 0.55rem 0 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.about-right {
+  display: grid;
+  gap: 14px;
+}
+
+/* Skills card */
+.about-skills {
+  padding: 1.1rem;
+}
+
+.about-skills__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0.8rem;
+}
+
+/* Bars */
+.skill {
+  margin-top: 0.85rem;
+}
+
+.skill__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 0.45rem;
+}
+
+.skill__name {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skill__pct {
+  margin: 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.skill__bar {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.skill__fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: rgba(255, 255, 255, 0.9);
+  transform-origin: left;
+  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================
+   APPS MARQUEE (iconos)
+========================= */
+
+.about-apps {
+  padding: 1.1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.about-apps__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0.85rem;
+}
+
+/* zona marquee */
+.apps-marquee {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* degradados laterales para “fade” */
+.apps-marquee::before,
+.apps-marquee::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 70px;
+  z-index: 2;
+  pointer-events: none;
+}
+.apps-marquee::before {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(11, 11, 14, 0.95),
+    rgba(11, 11, 14, 0)
+  );
+}
+.apps-marquee::after {
+  right: 0;
+  background: linear-gradient(
+    270deg,
+    rgba(11, 11, 14, 0.95),
+    rgba(11, 11, 14, 0)
+  );
+}
+
+.apps-track {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  width: max-content;
+  will-change: transform;
+  animation: appsScroll 22s linear infinite;
+}
+
+/* hover pausa (muy pro) */
+.apps-marquee:hover .apps-track {
+  animation-play-state: paused;
+}
+/* ===== ABOUT RIGHT GRID ===== */
+.about-right {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Skills a lo ancho completo */
+.about-skills {
+  grid-column: 1 / -1;
+}
+
+/* APPS ocupa 2 columnas (los “dos cuadrados”) */
+.about-apps {
+  grid-column: 1 / -1;
+}
+
+/* Barra: que llene la card */
+.about-apps .apps-marquee {
+  width: 100%;
+}
+
+/* que el track no se “encierre” pequeño */
+.about-apps .apps-track {
+  padding: 14px;
+}
+
+@keyframes appsScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* item */
+.app-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  min-width: 170px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+}
+
+.app-ic {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.app-ic svg {
+  width: 22px;
+  height: 22px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.app-name {
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
+/* ===== ABOUT RIGHT GRID ===== */
+.about-right {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Skills a lo ancho completo */
+.about-skills {
+  grid-column: 1 / -1;
+}
+
+/* APPS ocupa 2 columnas (los “dos cuadrados”) */
+.about-apps {
+  grid-column: 1 / -1;
+}
+
+/* Barra: que llene la card */
+.about-apps .apps-marquee {
+  width: 100%;
+}
+
+/* que el track no se “encierre” pequeño */
+.about-apps .apps-track {
+  padding: 14px;
+}
+/* Solo para la stat de ubicación */
+.about-stat--loc .about-stat__v {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.about-stat--loc .about-stat__v br {
+  display: none; /* opcional: quita salto */
+}
+.app-item {
+  min-width: 190px;
+  padding: 12px 14px;
+}
+
+.app-ic {
+  width: 38px;
+  height: 38px;
+}
+
+/* Si quieres mantener el / pero en 2 líneas controladas */
+@media (max-width: 520px) {
+  .about-stat--loc .about-stat__v br {
+    display: block;
+  }
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .apps-track {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .about-dash {
+    grid-template-columns: 1fr;
+  }
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+  .about-right {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* =========================
    RESPONSIVE
@@ -1761,6 +2272,9 @@ body {
   .projects-grid {
     grid-template-columns: 1fr;
   }
+  .exp-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1794,6 +2308,10 @@ body {
   .panel p {
     font-size: 14px;
     max-width: 100%;
+  }
+  .exp-card__top {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

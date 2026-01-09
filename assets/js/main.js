@@ -1,524 +1,816 @@
-/**
- * ==========================================================================
- * GRADE 2: BOOTSTRAP + GSAP PORTFOLIO DEMO
- * Professional scroll animations with GSAP ScrollTrigger
- * ==========================================================================
- *
- * 🎓 LEARNING OBJECTIVES:
- * - Understand GSAP (GreenSock Animation Platform) fundamentals
- * - Master ScrollTrigger for scroll-based animations
- * - Learn timeline animations for complex sequences
- * - Implement batch animations for performance
- * - Build accessible animations with motion preferences
- *
- * 📚 WHAT IS GSAP?
- * GSAP is the industry-standard JavaScript animation library used by
- * companies like Google, Apple, and Netflix. It's:
- * - More powerful than CSS animations (complex sequences, fine control)
- * - More performant than jQuery animations (optimized for 60fps)
- * - Easier than vanilla JS animations (intuitive API)
- *
- * 💰 LICENSING NOTE:
- * GSAP core and ScrollTrigger are FREE for most use cases.
- * Only premium "Club GreenSock" plugins require payment.
- *
- * 🔗 GSAP DOCS: https://gsap.com/docs/v3/
- * 🔗 SCROLLTRIGGER: https://gsap.com/docs/v3/Plugins/ScrollTrigger/
- */
+/* =========================
+   0) GSAP SETUP
+========================= */
+gsap.registerPlugin(ScrollTrigger);
 
-// ==========================================================================
-// 1. GSAP SETUP
-// ==========================================================================
-
-/**
- * REGISTER SCROLLTRIGGER PLUGIN
- *
- * GSAP uses a plugin architecture. ScrollTrigger is separate from core GSAP.
- * You MUST register plugins before using them.
- *
- * Think of it like:
- * - gsap = the engine
- * - ScrollTrigger = a turbocharger you're adding to the engine
- */
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-/**
- * ACCESSIBILITY: Check motion preferences BEFORE any animations
- *
- * This single check affects ALL animation functions below.
- * If user prefers reduced motion, we skip animations entirely.
- *
- * 📐 PATTERN: Check once, use everywhere
- * Rather than checking in every function, we check once at the top
- * and early-return from functions when this is true.
- */
-const prefersReducedMotion = window.matchMedia(
+const prefersReduced = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 ).matches;
 
-// ==========================================================================
-// 2. HERO ANIMATIONS
-// ==========================================================================
+/* =========================
+   1) TIME (LOCAL)
+========================= */
+const timeEl = document.getElementById("localTime");
 
-/**
- * Hero section animations: entrance sequence + floating elements + parallax
- *
- * 🎓 KEY GSAP CONCEPTS DEMONSTRATED:
- * - gsap.timeline() for sequenced animations
- * - gsap.to() and gsap.from() for tweening
- * - Position parameters for overlap control
- * - Infinite looping with repeat: -1
- * - ScrollTrigger with scrub for parallax
- */
-function initHeroAnimations() {
-  // Guard clause: Skip all hero animations if reduced motion is preferred
-  if (prefersReducedMotion) return;
-
-  /**
-   * GSAP TIMELINE: Sequenced Animation
-   *
-   * 📐 WHAT IS A TIMELINE?
-   * A timeline is a container for multiple animations that play in sequence.
-   * Without a timeline, all gsap.to() calls would start simultaneously.
-   * With a timeline, they play one after another (or with controlled overlap).
-   *
-   * 📐 THE defaults OPTION:
-   * Setting defaults: { ease: 'power3.out' } applies that easing to ALL
-   * animations in this timeline. DRY principle — Don't Repeat Yourself!
-   *
-   * 📐 EASING EXPLAINED:
-   * 'power3.out' means:
-   * - power3 = cubic curve (stronger than power1, power2)
-   * - out = starts fast, ends slow (deceleration)
-   * This creates a "gentle landing" feel perfect for entrance animations.
-   *
-   * Other common easings:
-   * - 'power1.out' — subtle
-   * - 'power2.out' — moderate (most common)
-   * - 'power3.out' — pronounced
-   * - 'power4.out' — dramatic
-   * - 'elastic.out' — bouncy overshoot
-   * - 'back.out' — slight overshoot and settle
-   */
-  const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-  /**
-   * TIMELINE SEQUENCE WITH POSITION PARAMETERS
-   *
-   * The string parameter (like '-=0.6') controls WHEN the animation starts
-   * relative to the previous animation:
-   *
-   * - No parameter: Starts when previous animation ENDS
-   * - '-=0.6': Starts 0.6 seconds BEFORE previous ends (overlap)
-   * - '+=0.5': Starts 0.5 seconds AFTER previous ends (gap)
-   * - '<': Starts at same time as previous animation
-   * - '>': Starts when previous ends (same as no parameter)
-   *
-   * The overlaps ('-=0.6', '-=0.4', '-=0.2') create a cascading effect
-   * where elements appear to flow in rather than pop one by one.
-   */
-  heroTl
-    // First: Main title slides up and fades in
-    .from(".hero-title", {
-      y: 100, // Start 100px below final position
-      opacity: 0, // Start invisible
-      duration: 1, // Take 1 second to animate
-    })
-    // Second: Subtitle follows (overlaps by 0.6s for smooth flow)
-    .from(
-      ".hero-subtitle",
-      {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-      },
-      "-=0.6" // Start 0.6s before title animation ends
-    )
-    // Third: CTA buttons (overlaps by 0.4s)
-    .from(
-      ".hero-cta",
-      {
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-      },
-      "-=0.4"
-    )
-    // Fourth: Scroll indicator (just fades in, overlaps by 0.2s)
-    .from(
-      ".scroll-indicator",
-      {
-        opacity: 0,
-        duration: 0.5,
-      },
-      "-=0.2"
-    );
-
-  /**
-   * INFINITE FLOATING ANIMATIONS (Ambient Motion)
-   *
-   * 📐 THE PATTERN:
-   * - repeat: -1 — Loop forever (-1 means infinite)
-   * - yoyo: true — Reverse direction each loop (A→B→A→B instead of A→B→A→B)
-   * - ease: 'sine.inOut' — Smooth acceleration AND deceleration (feels organic)
-   *
-   * Different durations (8s, 10s, 7s) prevent shapes from syncing up,
-   * creating more natural, chaotic-looking movement.
-   *
-   * ⚠️ PERFORMANCE NOTE:
-   * Infinite animations run constantly. We're only animating transform
-   * properties (x, y) which are GPU-accelerated and won't cause jank.
-   * Never infinitely animate width, height, margin, etc.!
-   */
-  gsap.to(".shape-1", {
-    x: 50, // Move 50px right
-    y: -30, // Move 30px up
-    duration: 8, // Over 8 seconds
-    repeat: -1, // Loop forever
-    yoyo: true, // Reverse each loop
-    ease: "sine.inOut", // Smooth organic movement
-  });
-
-  gsap.to(".shape-2", {
-    x: -40,
-    y: 40,
-    duration: 10, // Different duration = doesn't sync with shape-1
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
-
-  gsap.to(".shape-3", {
-    x: 30,
-    y: 20,
-    duration: 7,
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
-
-  /**
-   * SCROLLTRIGGER PARALLAX EFFECT
-   *
-   * 📐 WHAT IS PARALLAX?
-   * Parallax creates depth by moving background elements slower than
-   * foreground elements. As user scrolls, background "lags behind,"
-   * creating an illusion of 3D space.
-   *
-   * 📐 SCROLLTRIGGER CONFIG EXPLAINED:
-   *
-   * trigger: '.hero'
-   *   - The element that defines the scroll range
-   *
-   * start: 'top top'
-   *   - Format: "[trigger position] [scroller position]"
-   *   - "top top" = when hero's TOP hits viewport's TOP
-   *
-   * end: 'bottom top'
-   *   - "bottom top" = when hero's BOTTOM hits viewport's TOP
-   *   - This means animation runs while hero is visible
-   *
-   * scrub: true
-   *   - CRUCIAL! Links animation progress to scroll position
-   *   - Without scrub: animation plays once when triggered
-   *   - With scrub: animation progress = scroll progress
-   *   - scrub: 0.5 would add 0.5s smoothing/lag
-   *
-   * 📐 yPercent: 30 EXPLAINED:
-   * Moves element by 30% of its OWN height as you scroll.
-   * Using percentage (not pixels) makes it responsive.
-   */
-  gsap.to(".hero-bg", {
-    yPercent: 30, // Move down 30% of its height
-    ease: "none", // Linear movement — matches scroll exactly
-    scrollTrigger: {
-      trigger: ".hero",
-      start: "top top",
-      end: "bottom top",
-      scrub: true, // Link to scroll position
-    },
-  });
-
-  // Floating shapes also have parallax (slower than background)
-  gsap.to(".floating-shapes", {
-    yPercent: 20, // Moves less than background (less parallax)
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".hero",
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-    },
-  });
+function updateLocalTime() {
+  if (!timeEl) return;
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  timeEl.textContent = `LOCAL / ${hh}:${mm}`;
 }
 
-// ==========================================================================
-// 3. SCROLL REVEAL ANIMATIONS
-// ==========================================================================
+updateLocalTime();
+setInterval(updateLocalTime, 15000);
 
-/**
- * Generic scroll-triggered reveal for any element with .gsap-reveal class
- *
- * 🎓 gsap.utils.toArray() EXPLAINED:
- * GSAP provides utility functions. toArray() converts:
- * - NodeList (from querySelectorAll) → Array
- * - Single element → Array with one item
- * - Selector string → Array of matching elements
- *
- * This ensures we can always use array methods like forEach().
- *
- * 📐 gsap.from() vs gsap.to():
- * - gsap.to(el, { x: 100 }) — animate FROM current state TO x:100
- * - gsap.from(el, { x: 100 }) — animate FROM x:100 TO current state
- *
- * For reveals, we use .from() because we want elements to animate
- * FROM invisible/offset TO their natural CSS state.
- */
-function initScrollReveals() {
-  if (prefersReducedMotion) return;
+/* =========================
+   2) SCROLL PROGRESS
+========================= */
+const progressEl = document.getElementById("scrollProgress");
 
-  // Convert selector to array and loop through each element
-  gsap.utils.toArray(".gsap-reveal").forEach((el) => {
-    gsap.from(el, {
-      y: 50, // Start 50px below
-      opacity: 0, // Start invisible
-      duration: 0.8,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: el, // This element triggers its own animation
-        start: "top 85%", // When element's top hits 85% of viewport
-
-        /**
-         * toggleActions: 'play none none none'
-         *
-         * 📐 FORMAT: 'onEnter onLeave onEnterBack onLeaveBack'
-         *
-         * Options for each: play, pause, resume, reset, restart, complete, reverse, none
-         *
-         * 'play none none none' means:
-         * - onEnter: play the animation
-         * - onLeave: do nothing (animation stays at end)
-         * - onEnterBack: do nothing (don't replay when scrolling back up)
-         * - onLeaveBack: do nothing
-         *
-         * This creates a "one-time reveal" effect.
-         */
-        toggleActions: "play none none none",
-      },
-    });
-  });
+function updateScrollProgress() {
+  if (!progressEl) return;
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const p = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressEl.style.width = `${p}%`;
 }
 
-// ==========================================================================
-// 4. SKILL BARS ANIMATION
-// ==========================================================================
+updateScrollProgress();
+window.addEventListener("scroll", updateScrollProgress, { passive: true });
 
-/**
- * Animated progress bars that fill when scrolled into view
- *
- * 🎓 DATA ATTRIBUTES FOR CONFIGURATION:
- * Using data-width="95" on HTML elements lets us:
- * - Keep animation config in HTML (content) not JS (behavior)
- * - Easily change values without touching JavaScript
- * - Support dynamic content from a CMS
- *
- * HTML: <div class="skill-bar" data-width="95"></div>
- * JS: bar.dataset.width → "95"
- */
-function initSkillBars() {
-  const skillBars = document.querySelectorAll(".skill-bar");
+/* =========================
+   3) MOBILE MENU (ROBUSTO)
+   - Funciona SIEMPRE con CSS (.is-open)
+   - GSAP solo anima
+========================= */
+(() => {
+  const overlay = document.getElementById("menuOverlay"); // overlay
+  const openBtn = document.querySelector("[aria-controls='menuOverlay']"); // botón 4 dots (mobile)
+  const closeBtn = document.querySelector(".menu-toggle--close"); // botón cerrar dentro overlay
+  const panel = overlay?.querySelector(".menu-panel") || null;
+  const links = overlay ? overlay.querySelectorAll(".menu-list a") : [];
 
-  skillBars.forEach((bar) => {
-    // Read target width from data attribute
-    const targetWidth = bar.dataset.width + "%";
+  if (!overlay || !openBtn) return;
 
-    // Accessibility: Show final state immediately if motion is reduced
-    if (prefersReducedMotion) {
-      bar.style.width = targetWidth;
-      return; // Skip animation setup for this element
+  let menuOpen = false;
+
+  // Estado inicial correcto
+  overlay.classList.remove("is-open");
+  overlay.setAttribute("aria-hidden", "true");
+  openBtn.setAttribute("aria-expanded", "false");
+  closeBtn?.setAttribute("aria-expanded", "false");
+
+  // Timeline GSAP (solo si no reduce motion)
+  const menuTL = gsap.timeline({
+    paused: true,
+    defaults: { ease: "power4.out" },
+  });
+
+  if (!prefersReduced) {
+    menuTL
+      .fromTo(
+        overlay,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.45, clearProps: "opacity" }
+      )
+      .from(
+        links,
+        { y: 120, skewY: 6, opacity: 0, duration: 0.75, stagger: 0.1 },
+        "-=0.15"
+      );
+  }
+
+  function openMenu() {
+    menuOpen = true;
+
+    overlay.classList.add("is-open"); // CSS manda
+    overlay.setAttribute("aria-hidden", "false");
+    openBtn.setAttribute("aria-expanded", "true");
+
+    openBtn.classList.add("active");
+    closeBtn?.classList.add("active");
+    closeBtn?.setAttribute("aria-expanded", "true");
+
+    document.body.classList.add("no-scroll");
+
+    // ✅ FIX: asegura que los links nunca se queden invisibles por GSAP
+    if (links && links.length) {
+      gsap.set(links, { clearProps: "opacity,transform,filter" });
+      links.forEach((a) => {
+        a.style.opacity = "1";
+        a.style.transform = "none";
+      });
     }
 
-    /**
-     * ANIMATE WIDTH (Exception to the rule!)
-     *
-     * ⚠️ We said "never animate width" for performance reasons.
-     * Skill bars are an exception because:
-     * 1. The bar is small (low rendering cost)
-     * 2. It's a one-time animation, not continuous
-     * 3. The visual effect (filling bar) requires width animation
-     *
-     * For large elements or continuous animations, use transform: scaleX() instead.
-     */
-    gsap.to(bar, {
-      width: targetWidth,
-      duration: 1.2,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: bar,
-        start: "top 90%",
-        toggleActions: "play none none none",
-      },
+    if (!prefersReduced) menuTL.play(0);
+  }
+
+  function closeMenu() {
+    menuOpen = false;
+
+    openBtn.classList.remove("active");
+    closeBtn?.classList.remove("active");
+
+    overlay.setAttribute("aria-hidden", "true");
+    openBtn.setAttribute("aria-expanded", "false");
+    closeBtn?.setAttribute("aria-expanded", "false");
+
+    document.body.classList.remove("no-scroll");
+
+    if (!prefersReduced) {
+      menuTL.reverse();
+      menuTL.eventCallback("onReverseComplete", () => {
+        overlay.classList.remove("is-open");
+        menuTL.eventCallback("onReverseComplete", null);
+      });
+    } else {
+      overlay.classList.remove("is-open");
+    }
+  }
+
+  // Toggle abrir/cerrar con el botón de 4 dots
+  openBtn.addEventListener("click", () => {
+    menuOpen ? closeMenu() : openMenu();
+  });
+
+  // Botón de cerrar
+  closeBtn?.addEventListener("click", closeMenu);
+
+  // Cerrar al clicar link
+  links.forEach((a) => a.addEventListener("click", closeMenu));
+
+  // Cerrar con ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menuOpen) closeMenu();
+  });
+
+  // Cerrar al clicar fuera del panel
+  if (panel) {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeMenu();
     });
+  }
+})();
+
+/* =========================
+   4) LANG TOGGLE (ES/EN)
+========================= */
+const langBtns = document.querySelectorAll(".lang-btn");
+
+function setLang(lang) {
+  // Botones active
+  langBtns.forEach((b) => {
+    const active = b.dataset.lang === lang;
+    b.classList.toggle("is-active", active);
+    b.setAttribute("aria-pressed", active ? "true" : "false");
   });
+
+  // CTA principal + botón del form
+  // CTA principal + botón del form (FIX DEFINITIVO)
+  document.querySelectorAll(".btn-pill[data-cta]").forEach((el) => {
+    const type = el.dataset.cta;
+
+    if (type === "send") {
+      el.textContent = lang === "en" ? "Send" : "Enviar";
+    }
+
+    if (type === "idea") {
+      el.textContent = lang === "en" ? "Tell me your idea" : "Cuéntame tu idea";
+    }
+  });
+
+  document.documentElement.lang = lang;
 }
 
-// ==========================================================================
-// 5. PROJECT CARDS STAGGER ANIMATION
-// ==========================================================================
+// default ES
+setLang("es");
 
-/**
- * Batch animation for project cards with staggered reveal
- *
- * 🎓 ScrollTrigger.batch() EXPLAINED:
- * batch() is a PERFORMANCE OPTIMIZATION for animating many elements.
- *
- * Instead of creating individual ScrollTriggers for each card (expensive!),
- * batch() groups elements and fires callbacks with arrays of elements
- * that enter/leave together.
- *
- * 📐 WHY THIS MATTERS:
- * - 100 project cards with individual triggers = 100 ScrollTrigger instances
- * - 100 project cards with batch = 1 ScrollTrigger instance
- * - Much better memory usage and scroll performance!
- *
- * 📐 STAGGER EXPLAINED:
- * stagger: 0.15 means each element starts animating 0.15s after the previous.
- * If 4 cards enter at once:
- * - Card 1: starts at 0s
- * - Card 2: starts at 0.15s
- * - Card 3: starts at 0.3s
- * - Card 4: starts at 0.45s
- *
- * This creates the cascading "wave" effect.
- */
-function initProjectCards() {
-  if (prefersReducedMotion) return;
+langBtns.forEach((btn) => {
+  btn.addEventListener("click", () => setLang(btn.dataset.lang));
+});
 
-  ScrollTrigger.batch(".project-card", {
-    /**
-     * onEnter receives an array of ALL elements that just entered the viewport
-     * (in this scroll frame). We animate them as a batch with stagger.
-     */
-    onEnter: (batch) =>
-      gsap.from(batch, {
-        y: 60, // Start 60px below
-        opacity: 0, // Start invisible
-        duration: 0.8,
-        stagger: 0.15, // 0.15s delay between each card
-        ease: "power2.out",
-      }),
-    start: "top 90%", // Trigger when card top hits 90% of viewport
-    once: true, // Only animate once (no re-triggering on scroll back)
-  });
-}
-
-// ==========================================================================
-// 6. NAVBAR BACKGROUND ON SCROLL
-// ==========================================================================
-
-/**
- * Dynamic navbar styling based on scroll position
- *
- * 🎓 ScrollTrigger.create() EXPLAINED:
- * create() makes a standalone ScrollTrigger NOT attached to an animation.
- * Use this when you want scroll-based logic WITHOUT animating properties.
- *
- * Examples:
- * - Toggle classes (like we're doing here)
- * - Fire analytics events at certain scroll points
- * - Lazy-load content when user scrolls near it
- * - Show/hide elements based on scroll direction
- *
- * 📐 THE CALLBACK PATTERN:
- * Instead of animating, we use onUpdate callback to run custom code
- * whenever scroll position changes.
- */
-function initNavbarScroll() {
-  const navbar = document.querySelector(".navbar");
-
-  ScrollTrigger.create({
-    /**
-     * start: 'top -100' means this trigger activates when
-     * the page is scrolled 100px down from the top.
-     *
-     * Format: "[trigger position] [scroller position]"
-     * But when there's no trigger element, it's just the scroll position.
-     */
-    start: "top -100",
-
-    /**
-     * onUpdate fires on EVERY scroll event while trigger is active.
-     *
-     * self.scroll() returns current scroll position in pixels.
-     * We use this to toggle a class that changes navbar appearance.
-     */
-    onUpdate: (self) => {
-      if (self.scroll() > 100) {
-        navbar.classList.add("scrolled"); // Add solid background
-      } else {
-        navbar.classList.remove("scrolled"); // Remove (transparent)
-      }
-    },
-  });
-}
-
-// ==========================================================================
-// 7. Smooth Scroll for Anchor Links
-// ==========================================================================
-
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", (e) => {
-      const targetId = anchor.getAttribute("href");
-      if (targetId === "#") return;
-
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-
-        // Close mobile menu if open
-        const navbarCollapse = document.querySelector(".navbar-collapse");
-        if (navbarCollapse.classList.contains("show")) {
-          bootstrap.Collapse.getOrCreateInstance(navbarCollapse).hide();
-        }
-
-        const navHeight = document.querySelector(".navbar").offsetHeight;
-
-        gsap.to(window, {
-          duration: 0.8,
-          scrollTo: { y: target, offsetY: navHeight },
-          ease: "power2.inOut",
-        });
-      }
-    });
-  });
-}
-
-// ==========================================================================
-// 8. Initialize Everything
-// ==========================================================================
-
+/* =========================
+   5) BOOTSTRAP CAROUSEL INIT
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  initHeroAnimations();
-  initScrollReveals();
-  initSkillBars();
-  initProjectCards();
-  initNavbarScroll();
-  initSmoothScroll();
+  const carousel = document.querySelector("#heroCarousel");
+  if (!carousel || !window.bootstrap) return;
 
-  console.log("🚀 Grade 2 Demo: Bootstrap + GSAP animations initialized");
-
-  // Refresh ScrollTrigger after all images load
-  window.addEventListener("load", () => {
-    ScrollTrigger.refresh();
+  new bootstrap.Carousel(carousel, {
+    interval: 2600,
+    pause: false,
+    ride: "carousel",
+    touch: true,
+    wrap: true,
   });
 });
 
-// ==========================================================================
-// 9. Cleanup (for SPA environments)
-// ==========================================================================
+/* =========================
+   6) HERO: Animaciones iniciales
+========================= */
+if (!prefersReduced) {
+  gsap.from(".hero-title", {
+    y: 18,
+    opacity: 0,
+    duration: 0.9,
+    ease: "power3.out",
+  });
 
-window.cleanupAnimations = () => {
-  ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-  gsap.killTweensOf("*");
-};
+  gsap.from(".badge-item", {
+    y: 10,
+    opacity: 0,
+    duration: 0.7,
+    stagger: 0.12,
+    ease: "power3.out",
+    delay: 0.15,
+  });
+
+  gsap.from(".tile", {
+    y: 18,
+    opacity: 0,
+    duration: 0.9,
+    stagger: 0.08,
+    ease: "power3.out",
+    delay: 0.15,
+  });
+
+  gsap.from(".lead", {
+    y: 10,
+    opacity: 0,
+    duration: 0.8,
+    ease: "power3.out",
+    delay: 0.25,
+  });
+
+  gsap.to(".scroll-line", {
+    scaleX: 0.3,
+    duration: 0.8,
+    yoyo: true,
+    repeat: -1,
+    ease: "power2.inOut",
+  });
+}
+
+/* =========================
+   7) REVEALS: scroll
+========================= */
+document.querySelectorAll(".reveal").forEach((el) => {
+  if (prefersReduced) return;
+
+  gsap.fromTo(
+    el,
+    { y: 18, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.9,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: el,
+        start: "top 85%",
+      },
+    }
+  );
+});
+
+/* =========================
+   8) Parallax suave en collage
+========================= */
+if (!prefersReduced) {
+  gsap.utils.toArray(".tile").forEach((tile, i) => {
+    gsap.to(tile, {
+      y: i % 2 === 0 ? -18 : 14,
+      scrollTrigger: {
+        trigger: ".collage",
+        start: "top 85%",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+  });
+}
+
+/* =========================
+   9) Tilt micro (sin librería)
+========================= */
+const tiltEls = document.querySelectorAll("[data-tilt]");
+
+tiltEls.forEach((card) => {
+  let rect;
+
+  function onMove(e) {
+    if (prefersReduced) return;
+    rect = rect || card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+    gsap.to(card, {
+      rotateY: x * 6,
+      rotateX: -y * 6,
+      transformPerspective: 900,
+      transformOrigin: "center",
+      duration: 0.35,
+      ease: "power3.out",
+    });
+  }
+
+  function onLeave() {
+    rect = null;
+    gsap.to(card, {
+      rotateY: 0,
+      rotateX: 0,
+      duration: 0.5,
+      ease: "power3.out",
+    });
+  }
+
+  card.addEventListener("mousemove", onMove);
+  card.addEventListener("mouseleave", onLeave);
+});
+
+/* =========================
+   10) Magnetic buttons
+========================= */
+const magnetics = document.querySelectorAll(".magnetic");
+
+magnetics.forEach((btn) => {
+  let r;
+
+  btn.addEventListener("mousemove", (e) => {
+    if (prefersReduced) return;
+    r = r || btn.getBoundingClientRect();
+
+    const x = e.clientX - (r.left + r.width / 2);
+    const y = e.clientY - (r.top + r.height / 2);
+
+    gsap.to(btn, {
+      x: x * 0.18,
+      y: y * 0.18,
+      duration: 0.25,
+      ease: "power3.out",
+    });
+  });
+
+  btn.addEventListener("mouseleave", () => {
+    r = null;
+    gsap.to(btn, {
+      x: 0,
+      y: 0,
+      duration: 0.35,
+      ease: "power3.out",
+    });
+  });
+});
+
+/* =========================
+   11) Cursor PRO: dot + blob (smooth + squash)
+   ✅ FIX: lo dejamos UNA sola vez (sin duplicados)
+========================= */
+(() => {
+  const dot = document.querySelector(".cursor-dot");
+  const blob = document.querySelector(".cursor-blob");
+
+  // En táctil/coarse no hacemos nada (tu CSS lo suele ocultar)
+  const isCoarse = window.matchMedia(
+    "(hover: none) and (pointer: coarse)"
+  ).matches;
+
+  if (prefersReduced || isCoarse || (!dot && !blob)) return;
+
+  let mx = window.innerWidth / 2;
+  let my = window.innerHeight / 2;
+
+  // dot (rápido)
+  let dx = mx,
+    dy = my;
+
+  // blob (lento)
+  let bx = mx,
+    by = my;
+
+  // squash/stretch por velocidad
+  let lastBx = bx,
+    lastBy = by;
+
+  const show = () => {
+    if (dot) dot.style.opacity = "1";
+    if (blob) blob.style.opacity = "1";
+  };
+
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      show();
+    },
+    { passive: true }
+  );
+
+  // targets hover
+  const hoverSelectors =
+    "a, button, .btn-pill, .btn-ghost, .magnetic, [role='button'], input, textarea, select, label";
+
+  document.querySelectorAll(hoverSelectors).forEach((el) => {
+    el.addEventListener("mouseenter", () =>
+      document.documentElement.classList.add("cursor-hover")
+    );
+    el.addEventListener("mouseleave", () =>
+      document.documentElement.classList.remove("cursor-hover")
+    );
+  });
+
+  function animate() {
+    // DOT: rápido
+    dx += (mx - dx) * 0.35;
+    dy += (my - dy) * 0.35;
+
+    if (dot) {
+      dot.style.left = `${dx}px`;
+      dot.style.top = `${dy}px`;
+    }
+
+    // BLOB: suave
+    bx += (mx - bx) * 0.1;
+    by += (my - by) * 0.1;
+
+    if (blob) {
+      blob.style.left = `${bx}px`;
+      blob.style.top = `${by}px`;
+
+      const vx = bx - lastBx;
+      const vy = by - lastBy;
+      lastBx = bx;
+      lastBy = by;
+
+      const speed = Math.min(Math.hypot(vx, vy), 24);
+      const stretch = 1 + speed / 22;
+      const squash = 1 - speed / 80;
+      const angle = Math.atan2(vy, vx) * (180 / Math.PI);
+
+      blob.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${stretch}, ${squash})`;
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+})();
+
+/* =========================
+   12) Form demo (no envía)
+========================= */
+const form = document.querySelector(".contact-form");
+
+if (form) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type='submit']");
+    if (!btn) return;
+
+    const prev = btn.textContent;
+    btn.textContent = "ENVIADO ✓";
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btn.textContent = prev;
+      btn.disabled = false;
+      form.reset();
+    }, 1400);
+  });
+}
+
+/* =========================
+   13) Video safety: pausa si está oculto
+========================= */
+const heroVideo = document.querySelector(".hero-video-el");
+
+if (heroVideo) {
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) heroVideo.play().catch(() => {});
+      else heroVideo.pause();
+    },
+    { threshold: 0.15 }
+  );
+  io.observe(heroVideo);
+}
+
+/* =========================
+   14) Footer: back to top
+========================= */
+const toTop = document.getElementById("toTop");
+
+if (toTop) {
+  toTop.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReduced ? "auto" : "smooth",
+    });
+  });
+}
+
+/* ==========================================================
+   404 PAGE — JS (integrado en main.js)
+   - Hora local en 404
+   - Cursor pro mini en 404 (sin depender del resto)
+   ✅ FIX: sin redeclarar variables globales (no rompe el archivo)
+   - NO afecta a otras páginas (solo si existe .e404)
+========================================================== */
+(() => {
+  const is404 = document.querySelector(".e404");
+  if (!is404) return;
+
+  const prefersReduced404 = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  /* =========================
+     404: LOCAL TIME
+     (reutiliza el mismo #localTime, pero sin redeclarar timeEl global)
+  ========================= */
+  const timeEl404 = document.getElementById("localTime");
+  function updateLocalTime404() {
+    if (!timeEl404) return;
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    timeEl404.textContent = `LOCAL / ${hh}:${mm}`;
+  }
+  updateLocalTime404();
+  setInterval(updateLocalTime404, 15000);
+
+  /* =========================
+     404: CURSOR PRO (dot + blob)
+     (solo en desktop / sin reduced motion)
+  ========================= */
+  const dot404 = document.querySelector(".cursor-dot");
+  const blob404 = document.querySelector(".cursor-blob");
+
+  const isCoarse = window.matchMedia(
+    "(hover: none) and (pointer: coarse)"
+  ).matches;
+
+  if (prefersReduced404 || isCoarse || (!dot404 && !blob404)) return;
+
+  let mx = window.innerWidth / 2;
+  let my = window.innerHeight / 2;
+
+  // dot rápido
+  let dx = mx,
+    dy = my;
+
+  // blob suave
+  let bx = mx,
+    by = my;
+
+  let lastBx = bx,
+    lastBy = by;
+
+  const show = () => {
+    if (dot404) dot404.style.opacity = "1";
+    if (blob404) blob404.style.opacity = "1";
+  };
+
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      show();
+    },
+    { passive: true }
+  );
+
+  // hover targets 404
+  document
+    .querySelectorAll("a, button, .magnetic, .btn-pill, .btn-ghost")
+    .forEach((el) => {
+      el.addEventListener("mouseenter", () =>
+        document.documentElement.classList.add("cursor-hover")
+      );
+      el.addEventListener("mouseleave", () =>
+        document.documentElement.classList.remove("cursor-hover")
+      );
+    });
+
+  function animate404() {
+    // DOT
+    dx += (mx - dx) * 0.35;
+    dy += (my - dy) * 0.35;
+
+    if (dot404) {
+      dot404.style.left = `${dx}px`;
+      dot404.style.top = `${dy}px`;
+    }
+
+    // BLOB
+    bx += (mx - bx) * 0.1;
+    by += (my - by) * 0.1;
+
+    if (blob404) {
+      blob404.style.left = `${bx}px`;
+      blob404.style.top = `${by}px`;
+
+      const vx = bx - lastBx;
+      const vy = by - lastBy;
+      lastBx = bx;
+      lastBy = by;
+
+      const speed = Math.min(Math.hypot(vx, vy), 24);
+      const stretch = 1 + speed / 22;
+      const squash = 1 - speed / 80;
+      const angle = Math.atan2(vy, vx) * (180 / Math.PI);
+
+      blob404.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${stretch}, ${squash})`;
+    }
+
+    requestAnimationFrame(animate404);
+  }
+
+  animate404();
+})();
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.querySelector("[data-exp-accordion]");
+  if (!container) return;
+
+  const cards = Array.from(container.querySelectorAll("[data-exp-card]"));
+
+  const closeCard = (card) => {
+    const btn = card.querySelector(".exp-card__btn");
+    const panel = card.querySelector(".exp-card__panel");
+    card.classList.remove("is-open");
+    btn?.setAttribute("aria-expanded", "false");
+    if (panel) panel.style.maxHeight = "0px";
+  };
+
+  const openCard = (card) => {
+    const btn = card.querySelector(".exp-card__btn");
+    const panel = card.querySelector(".exp-card__panel");
+    card.classList.add("is-open");
+    btn?.setAttribute("aria-expanded", "true");
+    if (panel) panel.style.maxHeight = panel.scrollHeight + "px";
+  };
+
+  cards.forEach(closeCard);
+
+  cards.forEach((card) => {
+    const btn = card.querySelector(".exp-card__btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+      const wasOpen = card.classList.contains("is-open");
+      cards.forEach(closeCard);
+      if (!wasOpen) openCard(card);
+    });
+  });
+
+  window.addEventListener("resize", () => {
+    cards.forEach((card) => {
+      if (!card.classList.contains("is-open")) return;
+      const panel = card.querySelector(".exp-card__panel");
+      if (panel) panel.style.maxHeight = panel.scrollHeight + "px";
+    });
+  });
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const about = document.querySelector("#about");
+  if (!about) return;
+
+  const counters = Array.from(about.querySelectorAll(".count[data-count]"));
+  const fills = Array.from(about.querySelectorAll(".skill__fill[data-fill]"));
+
+  const animateCount = (el, to) => {
+    const start = 0;
+    const dur = 900;
+    const t0 = performance.now();
+
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const v = Math.round(start + (to - start) * (1 - Math.pow(1 - p, 3)));
+      el.textContent = String(v);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const run = () => {
+    counters.forEach((c) => animateCount(c, Number(c.dataset.count || 0)));
+    fills.forEach((f) => (f.style.width = `${Number(f.dataset.fill || 0)}%`));
+  };
+
+  // dispara al entrar en viewport
+  let done = false;
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (done) return;
+      if (entries.some((e) => e.isIntersecting)) {
+        done = true;
+        run();
+        io.disconnect();
+      }
+    },
+    { threshold: 0.25 }
+  );
+
+  io.observe(about);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ===== Animación contadores + barras al entrar =====
+  const about = document.querySelector("#about");
+  if (about) {
+    const counters = Array.from(about.querySelectorAll(".count[data-count]"));
+    const fills = Array.from(about.querySelectorAll(".skill__fill[data-fill]"));
+
+    const animateCount = (el, to) => {
+      const dur = 900;
+      const t0 = performance.now();
+      const easeOut = (p) => 1 - Math.pow(1 - p, 3);
+
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        el.textContent = String(Math.round(to * easeOut(p)));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const run = () => {
+      counters.forEach((c) => animateCount(c, Number(c.dataset.count || 0)));
+      fills.forEach((f) => (f.style.width = `${Number(f.dataset.fill || 0)}%`));
+    };
+
+    let done = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (done) return;
+        if (entries.some((e) => e.isIntersecting)) {
+          done = true;
+          run();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    io.observe(about);
+  }
+
+  // ===== Botón "Leer mi historia" =====
+  const moreBox = document.querySelector("[data-about-more]");
+  if (moreBox) {
+    const btn = moreBox.querySelector(".about-morebtn");
+    const panel = moreBox.querySelector(".about-morepanel");
+
+    const close = () => {
+      moreBox.classList.remove("is-open");
+      btn?.setAttribute("aria-expanded", "false");
+      if (panel) panel.style.maxHeight = "0px";
+    };
+
+    const open = () => {
+      moreBox.classList.add("is-open");
+      btn?.setAttribute("aria-expanded", "true");
+      if (panel) panel.style.maxHeight = panel.scrollHeight + "px";
+    };
+
+    close();
+
+    btn?.addEventListener("click", () => {
+      const isOpen = moreBox.classList.contains("is-open");
+      if (isOpen) close();
+      else open();
+    });
+
+    window.addEventListener("resize", () => {
+      if (!moreBox.classList.contains("is-open")) return;
+      if (panel) panel.style.maxHeight = panel.scrollHeight + "px";
+    });
+  }
+
+  // ===== Marquee infinito: duplicar items para loop perfecto =====
+  const marquee = document.querySelector("[data-marquee]");
+  if (marquee) {
+    const track = marquee.querySelector("[data-track]");
+    const dup = track?.querySelector(".apps-dup");
+    if (track && dup) {
+      // Copia todos los app-item del track y los mete en .apps-dup
+      const items = Array.from(track.querySelectorAll(".app-item")).map((el) =>
+        el.cloneNode(true)
+      );
+      dup.replaceWith(...items.map((n) => n)); // mete clones al final
+
+      // Ajuste: si por algún motivo no llega a 2 sets, vuelve a duplicar una vez
+      const totalItems = track.querySelectorAll(".app-item").length;
+      if (totalItems < 12) {
+        const again = Array.from(track.querySelectorAll(".app-item")).map(
+          (el) => el.cloneNode(true)
+        );
+        track.append(...again);
+      }
+    }
+  }
+});
