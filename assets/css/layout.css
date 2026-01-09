@@ -41,8 +41,6 @@
   background: var(--line);
   margin: 1.2rem 0;
 }
-
-/* Vertical line decor (como en tus capturas) */
 body::after {
   content: "";
   position: fixed;
